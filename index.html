@@ -16,7 +16,7 @@
       }
 
       #recordIDcontainer {
-        display: none;
+         display: none; 
       }
     </style>
   </head>
@@ -85,6 +85,27 @@
       // the writeup to view the URL pattern for fetch one and fetch all
       function fetchAll() {
         // TODO
+        let outCome = document.getElementById('output');
+        fetch('http://localhost:2001/posts/')
+          .then(
+            function(response) {
+              if (response.status !== 200) {
+                console.log("Check");
+                outCome.innerHTML = 'Looks like there was a problem. Status Code: '+response.status;
+                    return;
+        }
+      // Examine the text in the response
+      response.json().then(function(data) {
+        outCome.innerHTML = JSON.stringify(data);
+      });
+    }
+  )
+  .catch(function(err) {
+    console.log('Fetch Error :-S', err);
+  });
+
+
+      
       }
 
       // This function should fetch one entry from the given endpoint.
@@ -93,6 +114,40 @@
       // the writeup to view the URL pattern for fetch one and fetch all
       function fetchOne() {
         // TODO
+        //let string = window.prompt("Enter record Id");
+        let str = Number(prompt("Enter record Id"));
+        console.log(str);
+        if(isNaN(str)){
+          alert("error, not number");
+          document.getElementById('actionForm').reset();
+
+        }
+
+        let endpt = "http://localhost:2001/posts/" + str;
+        console.log(endpt);
+        fetch(endpt)
+          .then(
+            function(response) {
+              if (response.status !== 200) {
+                console.log("Check");
+                document.getElementById('output').innerHTML = 'Looks like there was a problem. Status Code: '+response.status;
+
+                    return;
+        }
+        console.log("Here");
+
+      // Examine the text in the response
+      response.json().then(function(data) {
+
+        document.getElementById('output').innerHTML = JSON.stringify(data);
+        
+      });
+    }
+  )
+  .catch(function(err) {
+    console.log('Fetch Error :-S', err);
+  });
+
       }
 
       // This function should use fetch to create one entry in the given endpoint.
@@ -100,8 +155,38 @@
       // The main difference from updateRecord() will be the URL you send data to; check
       // the writeup to view the URL pattern for create and update
       function createRecord() {
-        // TODO
-      }
+        //document.getElementById('recordForm').innerHTML = "Hello";
+        document.getElementById('recordForm').style.display="block";
+        document.getElementById('recordForm').style.display="hidden";
+        let au = document.getElementById("author").value;
+        let ti = document.getElementById("title").value;
+        
+        
+        //document.getElementById("output").innerHTML = au +' '+ ti;
+        //console.log(au);
+        //console.log(ti);
+        if(au !== "" && ti !==""){
+          //console.log("hello");
+          fetch("http://localhost:2001/posts",{
+            method:'post',
+            body:JSON.stringify({
+                author: au,
+                title: ti
+            }),
+            headers:{
+             "Content-Type": "application/json"
+            }
+            })
+            .then(function(response){
+              return response.json();      
+            })
+            .then(function(data){
+              console.log(data);
+            })
+          }         
+
+    }
+
 
       // This function should use fetch to update one existing entry in the given endpoint.
       // From the 4 CRUD actions, this is the UPDATE action, and uses the PUT http method.
@@ -109,6 +194,36 @@
       // the writeup to view the URL pattern for create and update
       function updateRecord() {
         // TODO
+        document.getElementById('recordForm').style.display="block";
+        document.getElementById('recordIDcontainer').style.display="block";
+        document.getElementById('recordIDcontainer').style.display="block";
+        let au = document.getElementById("author").value;
+        let ti = document.getElementById("title").value;
+        let idd = document.getElementById("recordID").value;
+        let endpt = "http://localhost:2001/posts/" + idd;
+
+        if(au !== "" && ti !==""&&idd!==""){
+        fetch(endpt,{
+          method:'put',
+          body:JSON.stringify({
+                
+                author: au,
+                title: ti
+           }),
+          headers:{
+             "Content-Type": "application/json"
+           }
+          })
+          .then(function(response){
+             return response.json();      
+          })
+          .then(function(data){
+          console.log(data);
+          })
+      
+        } 
+        
+
       }
 
       // This function should use fetch to delete one existing entry in the given endpoint.
@@ -118,6 +233,34 @@
       // delete all, only delete one.
       function deleteRecord() {
         // TODO
+        let str = Number(prompt("Enter record Id"));
+        console.log(str);
+        if(isNaN(str)){
+          alert("error, not number");
+          document.getElementById('actionForm').reset();
+        }
+
+        let endpt = "http://localhost:2001/posts/" + str;
+        
+        
+        fetch(endpt,{
+          method:'DELETE',
+          body:JSON.stringify({
+                author:"",
+                title: ""
+           }),
+          headers:{
+             "Content-Type": "application/json"
+           }
+          })
+          .then(function(response){
+             return response.json();      
+          })
+          .then(function(data){
+          console.log(data);
+          })
+      
+
       }
 
       window.addEventListener('DOMContentLoaded', () => {
